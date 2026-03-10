@@ -35,3 +35,14 @@ class Cluster:
     def monitor_system(self):
         print("\n--- System Metrics ---")
         self.monitor.collect_metrics()
+
+    # NEW METHOD
+    def run_simulation(self):
+
+        self.generate_tasks(10)
+        self.schedule_tasks()
+
+        if random.random() < 0.3:
+            self.random_failure()
+
+        self.monitor_system()
