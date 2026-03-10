@@ -1,16 +1,18 @@
 from simulation.cluster import Cluster
-import time
+from simulation.monitor import Monitor
 
-def main():
-    cluster = Cluster(5)
+def generate_dataset(iterations=500):
 
-    cluster.generate_tasks(10)
+    cluster = Cluster(num_nodes=10)
+    monitor = Monitor(cluster.nodes)
 
-    cluster.schedule_tasks()
+    for i in range(iterations):
+        print(f"\nSimulation Cycle {i+1}")
 
-    cluster.random_failure()
+        cluster.run_simulation()
 
-    cluster.monitor_system()
+        monitor.collect_metrics()
+
 
 if __name__ == "__main__":
-    main()
+    generate_dataset(500)
