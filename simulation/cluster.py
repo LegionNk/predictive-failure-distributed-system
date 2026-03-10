@@ -6,6 +6,7 @@ class Cluster:
     def __init__(self, num_nodes):
         self.nodes = [Node(i) for i in range(num_nodes)]
         self.task_queue = []
+        self.current_node = 0
 
     def generate_tasks(self, num_tasks):
         for i in range(num_tasks):
@@ -16,15 +17,14 @@ class Cluster:
         while self.task_queue:
             task = self.task_queue.pop(0)
 
-            alive_nodes = [n for n in self.nodes if n.status == "alive"]
+            node = self.nodes[self.current_node]
 
-            if not alive_nodes:
-                print("No available nodes!")
-                break
+            if node.status == "alive":
+                node.run_task(task)
+            else:
+                print(f"Skipping failed Node {node.node_id}")
 
-            node = min(alive_nodes, key=lambda n: n.workload)
-
-            node.run_task(task)
+            self.current_node = (self.current_node + 1) % len(self.nodes)
 
     def random_failure(self):
         node = random.choice(self.nodes)
