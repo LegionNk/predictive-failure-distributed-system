@@ -1,5 +1,6 @@
 from simulation.node import Node
 from simulation.task import Task
+from simulation.monitor import Monitor
 import random
 
 class Cluster:
@@ -7,6 +8,7 @@ class Cluster:
         self.nodes = [Node(i) for i in range(num_nodes)]
         self.task_queue = []
         self.current_node = 0
+        self.monitor = Monitor(self.nodes)
 
     def generate_tasks(self, num_tasks):
         for i in range(num_tasks):
@@ -29,3 +31,7 @@ class Cluster:
     def random_failure(self):
         node = random.choice(self.nodes)
         node.fail()
+
+    def monitor_system(self):
+        print("\n--- System Metrics ---")
+        self.monitor.collect_metrics()
