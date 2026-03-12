@@ -2,6 +2,7 @@ from simulation.node import Node
 from simulation.task import Task
 from simulation.monitor import Monitor
 from simulation.failure_injector import FailureInjector
+from prediction.predict_failure import FailurePredictor
 import random
 
 
@@ -14,6 +15,7 @@ class Cluster:
         self.current_node = 0
         self.monitor = Monitor(self.nodes)
         self.failure_injector = FailureInjector(self.nodes)
+        self.predictor = FailurePredictor()
 
 
     def generate_tasks(self, num_tasks):
@@ -35,7 +37,20 @@ class Cluster:
             node = self.nodes[self.current_node]
 
             if node.status == "alive":
-                node.run_task(task)
+
+                cpu = node.cpu_usage
+                memory = node.memory_usage
+                latency = node.latency
+
+                prediction, prob = self.predictor.predict(cpu, memory, latency)
+
+                print(f"Node {node.node_id} | Failure Probability: {prob:.2f}")
+
+                if prediction == 1:
+                    print(f"→ Skipping Node {node.node_id} (predicted failure risk)")
+                else:
+                    node.run_task(task)
+
             else:
                 print(f"Skipping failed Node {node.node_id}")
 
