@@ -1,27 +1,35 @@
-import time
 import random
 
+
 class Node:
+
     def __init__(self, node_id):
+
         self.node_id = node_id
         self.status = "alive"
-        self.workload = 0
+
+        # System metrics
+        self.cpu_usage = random.uniform(10, 90)
+        self.memory_usage = random.uniform(200, 800)
+        self.latency = random.uniform(1, 10)
+
 
     def run_task(self, task):
+
         if self.status == "alive":
-            self.workload += 1
+
             print(f"Node {self.node_id} executing Task {task.task_id}")
 
-            time.sleep(random.uniform(0.5, 1.5))
+            # simulate system load changes
+            self.cpu_usage = random.uniform(10, 95)
+            self.memory_usage = random.uniform(200, 900)
+            self.latency = random.uniform(1, 15)
 
-            self.workload -= 1
         else:
-            print(f"Node {self.node_id} is down")
+            print(f"Node {self.node_id} is failed and cannot run tasks")
+
 
     def fail(self):
+
         self.status = "failed"
         print(f"Node {self.node_id} FAILED")
-
-    def recover(self):
-        self.status = "alive"
-        print(f"Node {self.node_id} RECOVERED")
