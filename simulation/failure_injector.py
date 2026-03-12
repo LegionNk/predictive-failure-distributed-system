@@ -17,9 +17,9 @@ class FailureInjector:
         if failure_type == "node_crash":
 
             node.status = "failed"
-            print(f"[FAILURE] Node {node.node_id} crashed")
+            print(f"⚠ FAILURE INJECTED → Node 1 {node.node_id} crashed")
 
         elif failure_type == "cpu_overload":
 
             node.cpu_usage = 95
-            print(f"[FAILURE] CPU overload on Node {node.node_id}")
+            print(f"⚠ FAILURE INJECTED → CPU overload on Node {node.node_id}")
