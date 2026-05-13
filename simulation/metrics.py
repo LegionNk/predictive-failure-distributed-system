@@ -8,7 +8,7 @@ class Metrics:
         self.latency = latency
         self.status = status
 
-    def log(self):
+    def log(self):  
 
         print(
             f"Node {self.node_id} | CPU: {self.cpu:.2f}% | "

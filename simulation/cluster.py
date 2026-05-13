@@ -1,4 +1,5 @@
 from simulation.node import Node
+from self_healing.healer import SelfHealer
 from simulation.task import Task
 from simulation.monitor import Monitor
 from simulation.failure_injector import FailureInjector
@@ -16,6 +17,7 @@ class Cluster:
         self.monitor = Monitor(self.nodes)
         self.failure_injector = FailureInjector(self.nodes)
         self.predictor = FailurePredictor()
+        self.healer = SelfHealer(self.nodes)
 
 
     def generate_tasks(self, num_tasks):
@@ -79,6 +81,8 @@ class Cluster:
             self.random_failure()
 
         self.monitor_system()
+        
+        self.healer.recover_cluster()
 
 
     def inject_random_failure(self):
