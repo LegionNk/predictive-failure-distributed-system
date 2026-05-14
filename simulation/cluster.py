@@ -74,15 +74,25 @@ class Cluster:
             
     def get_healthy_node(self):
 
+        healthy_nodes = []
+
         for node in self.nodes:
 
             if (
-            node.status == "alive"
-            and node.cpu_usage < 85
+                node.status == "alive"
+                and node.cpu_usage < 85
             ):
-                return node
+                healthy_nodes.append(node)
 
-        return None
+        if not healthy_nodes:
+            return None
+
+        best_node = min(
+            healthy_nodes,
+            key=lambda node: node.cpu_usage
+        )
+
+        return best_node
 
 
     def random_failure(self):
