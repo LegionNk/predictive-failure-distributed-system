@@ -51,7 +51,7 @@ class Cluster:
                 if prediction == 1:
                     print(f"→ Node {node.node_id} risky")
 
-                    backup_node = self.get_healthy_node()
+                    backup_node = self.get_healthy_node(node)
                     
                     if backup_node:
                         print(
@@ -72,7 +72,7 @@ class Cluster:
 
             self.current_node = (self.current_node + 1) % len(self.nodes)
             
-    def get_healthy_node(self):
+    def get_healthy_node(self, exclude_node=None):
 
         healthy_nodes = []
 
@@ -81,6 +81,7 @@ class Cluster:
             if (
                 node.status == "alive"
                 and node.cpu_usage < 85
+                and node != exclude_node
             ):
                 healthy_nodes.append(node)
 

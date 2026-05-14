@@ -16,18 +16,21 @@ class Node:
 
     def run_task(self, task):
 
-        if self.status == "alive":
+        print(f"Node {self.node_id} executing Task {task.task_id}")
 
-            print(f"Node {self.node_id} executing Task {task.task_id}")
+        # Simulate workload increase
+        self.cpu_usage += random.randint(5, 15)
 
-            # simulate system load changes
-            self.cpu_usage = random.uniform(10, 95)
-            self.memory_usage = random.uniform(200, 900)
-            self.latency = random.uniform(1, 15)
+        self.memory_usage += random.randint(20, 50)
 
-        else:
-            print(f"Node {self.node_id} is failed and cannot run tasks")
+        self.latency += random.uniform(0.5, 2.0)
 
+        # Prevent unrealistic values
+        self.cpu_usage = min(self.cpu_usage, 100)
+
+        self.memory_usage = min(self.memory_usage, 1000)
+
+        self.latency = min(self.latency, 20)
 
     def fail(self):
 
