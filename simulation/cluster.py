@@ -49,7 +49,21 @@ class Cluster:
                 print(f"Node {node.node_id} | Failure Probability: {prob:.2f}")
 
                 if prediction == 1:
-                    print(f"→ Skipping Node {node.node_id} (predicted failure risk)")
+                    print(f"→ Node {node.node_id} risky")
+
+                    backup_node = self.get_healthy_node()
+                    
+                    if backup_node:
+                        print(
+                            f"Reassigning Task {task.task_id} "
+                            f"to Node {backup_node.node_id}"
+                        )
+                        
+                        backup_node.run_task(task)
+                        
+                    else:
+                        print("No healthy nodes available")
+
                 else:
                     node.run_task(task)
 
@@ -57,6 +71,18 @@ class Cluster:
                 print(f"Skipping failed Node {node.node_id}")
 
             self.current_node = (self.current_node + 1) % len(self.nodes)
+            
+    def get_healthy_node(self):
+
+        for node in self.nodes:
+
+            if (
+            node.status == "alive"
+            and node.cpu_usage < 85
+            ):
+                return node
+
+        return None
 
 
     def random_failure(self):
