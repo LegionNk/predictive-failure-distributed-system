@@ -1,3 +1,4 @@
+from analytics.system_analytics import SystemAnalytics
 from simulation.node import Node
 from self_healing.healer import SelfHealer
 from simulation.task import Task
@@ -14,11 +15,15 @@ class Cluster:
         self.nodes = [Node(i) for i in range(num_nodes)]
         self.task_queue = []
         self.current_node = 0
+        self.risk_data = {}
         self.monitor = Monitor(self.nodes)
         self.failure_injector = FailureInjector(self.nodes)
         self.predictor = FailurePredictor()
-        self.healer = SelfHealer(self.nodes)
-
+        self.analytics = SystemAnalytics()
+        self.healer = SelfHealer(
+            self.nodes,
+            self.analytics
+        )
 
     def generate_tasks(self, num_tasks):
 
@@ -30,7 +35,7 @@ class Cluster:
     def schedule_tasks(self):
 
         while self.task_queue:
-
+            
             # Inject random failure during simulation
             self.inject_random_failure()
 
@@ -45,6 +50,7 @@ class Cluster:
                 latency = node.latency
 
                 prediction, prob = self.predictor.predict(cpu, memory, latency)
+                self.risk_data[node.node_id] = prob
 
                 print(f"Node {node.node_id} | Failure Probability: {prob:.2f}")
 
@@ -57,6 +63,11 @@ class Cluster:
                         print(
                             f"Reassigning Task {task.task_id} "
                             f"to Node {backup_node.node_id}"
+                        )
+                        
+                        self.analytics.log_reassignment(
+                            task.task_id,
+                            backup_node.node_id
                         )
                         
                         backup_node.run_task(task)
@@ -120,9 +131,21 @@ class Cluster:
         self.monitor_system()
         
         self.healer.recover_cluster()
+        
+        self.analytics.display_dashboard(
+            self.nodes,
+            self.risk_data
+        )
 
 
     def inject_random_failure(self):
 
-        if random.random() < 0.3:
+       if random.random() < 0.3:
+
             self.failure_injector.inject_failure()
+
+            for node in self.nodes:
+
+                if node.status == "failed":
+
+                    self.analytics.log_failure(node.node_id)

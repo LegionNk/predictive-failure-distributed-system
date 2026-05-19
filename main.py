@@ -1,3 +1,8 @@
+print("=" * 50)
+print(" INITIALIZING DISTRIBUTED CLUSTER...")
+print(" LOADING FAILURE PREDICTION MODEL...")
+print(" STARTING NODE MONITORING...")
+print("=" * 50)
 from simulation.cluster import Cluster
 
 def generate_dataset(iterations=5):

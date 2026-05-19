@@ -2,29 +2,55 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def plot_cpu_usage():
+def plot_dashboard():
 
     data = pd.read_csv("data/runtime_metrics.csv")
-    data.columns = data.columns.str.strip()
 
     latest_data = data.groupby("node_id").last()
 
-    plt.figure(figsize=(10, 6))
+    node_ids = latest_data.index
 
-    plt.bar(
-        latest_data.index,
-        latest_data["cpu_usage"]
+    cpu = latest_data["cpu_usage"]
+    memory = latest_data["memory_usage"]
+    latency = latest_data["latency"]
+
+    status = latest_data["status"].apply(
+        lambda x: 1 if x == "alive" else 0
     )
 
-    plt.xlabel("Node ID")
-    plt.ylabel("CPU Usage (%)")
-    plt.title("CPU Usage Per Node")
+    plt.figure(figsize=(14, 10))
 
-    plt.grid(True)
+    # CPU Usage
+    plt.subplot(2, 2, 1)
+    plt.bar(node_ids, cpu)
+    plt.title("CPU Usage")
+    plt.xlabel("Node ID")
+    plt.ylabel("CPU %")
+
+    # Memory Usage
+    plt.subplot(2, 2, 2)
+    plt.bar(node_ids, memory)
+    plt.title("Memory Usage")
+    plt.xlabel("Node ID")
+    plt.ylabel("Memory MB")
+
+    # Latency
+    plt.subplot(2, 2, 3)
+    plt.bar(node_ids, latency)
+    plt.title("Network Latency")
+    plt.xlabel("Node ID")
+    plt.ylabel("Latency ms")
+
+    # Node Status
+    plt.subplot(2, 2, 4)
+    plt.bar(node_ids, status)
+    plt.title("Node Health Status")
+    plt.xlabel("Node ID")
+    plt.ylabel("1 = Alive | 0 = Failed")
+
+    plt.tight_layout()
 
     plt.show()
 
 
-if __name__ == "__main__":
-
-    plot_cpu_usage()
+plot_dashboard()

@@ -18,20 +18,22 @@ class Node:
 
         print(f"Node {self.node_id} executing Task {task.task_id}")
 
-        # Simulate workload increase
-        self.cpu_usage += random.randint(5, 15)
+        # Simulate workload changes
 
-        self.memory_usage += random.randint(20, 50)
+        self.cpu_usage += random.uniform(2, 8)
 
-        self.latency += random.uniform(0.5, 2.0)
+        self.memory_usage += random.uniform(10, 50)
 
-        # Prevent unrealistic values
+        self.latency += random.uniform(0.5, 2)
+
+        # Keep values within realistic limits
+
         self.cpu_usage = min(self.cpu_usage, 100)
 
         self.memory_usage = min(self.memory_usage, 1000)
 
         self.latency = min(self.latency, 20)
-
+        
     def fail(self):
 
         self.status = "failed"
