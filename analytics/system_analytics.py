@@ -1,3 +1,4 @@
+from datetime import datetime
 class SystemAnalytics:
 
     def __init__(self):
@@ -7,6 +8,22 @@ class SystemAnalytics:
         self.total_reassignments = 0
 
         self.event_logs = []
+        
+    def log_event(self, message):
+
+        timestamp = datetime.now().strftime("%H:%M:%S")
+
+        event = f"[{timestamp}] {message}"
+
+        self.event_logs.append(event)
+
+        with open(
+            "data/system_events.log",
+            "a",
+            encoding="utf-8"
+        ) as file:
+
+            file.write(event + "\n")
 
     # ----------------------------
     # Failure Tracking
@@ -15,10 +32,9 @@ class SystemAnalytics:
 
         self.total_failures += 1
 
-        event = f"FAILURE → Node {node_id} crashed"
-
-        self.event_logs.append(event)
-
+        self.log_event(
+            f"FAILURE → Node {node_id} crashed"
+        )
     # ----------------------------
     # Recovery Tracking
     # ----------------------------
@@ -26,10 +42,9 @@ class SystemAnalytics:
 
         self.total_recoveries += 1
 
-        event = f"RECOVERY → Node {node_id} recovered"
-
-        self.event_logs.append(event)
-
+        self.log_event(
+            f"RECOVERY → Node {node_id} restored"
+        )   
     # ----------------------------
     # Task Reassignment Tracking
     # ----------------------------
@@ -37,13 +52,9 @@ class SystemAnalytics:
 
         self.total_reassignments += 1
 
-        event = (
-            f"FAILOVER → "
-            f"Task {task_id} moved to Backup Node {node_id}"
+        self.log_event(
+            f"FAILOVER → Task {task_id} moved to Node {node_id}"
         )
-
-        self.event_logs.append(event)
-
     # ----------------------------
     # System Health Score
     # ----------------------------
